@@ -1,18 +1,18 @@
-package main
+package parse
 
 import (
     "fmt"
-    "github.com/mousavian/parse-golang-sdk"
 )
 
 
-func main() {
-    client := parse.Client{
+func Example() {
+    client := Client{
         AppId: "",
         RestKey: "",
         MasterKey: "",
     }
     
+    // Objects
     usersObject := client.Object("Users")
 
     // create
@@ -36,8 +36,8 @@ func main() {
     fmt.Println(user3["name"], user3["age"])
 
     // fetch
-    users := usersObject.GetAll()
-    for _, user := range users{
+    usersObjects := usersObject.GetAll()
+    for _, user := range usersObjects {
         fmt.Println("user", user, "\n\r")
     }
 
