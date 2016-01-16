@@ -100,9 +100,8 @@ func (self *UserType) Logout() map[string]interface{} {
 
 	json.Unmarshal(response, &result)
 
-	if len(self.client.sessionToken) > 0 {
-		self.client.sessionToken = ""
-	}
+	self.client.sessionToken = ""
+	self.objectId = ""
 
 	return result
 }
