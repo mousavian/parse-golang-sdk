@@ -6,11 +6,12 @@ import (
 )
 
 type UserType struct {
-	client   *Client
-	email    string
-	username string
-	password string
-	objectId string
+	client       *Client
+	email        string
+	username     string
+	password     string
+	objectId     string
+	sessionToken SessionToken
 }
 
 func (client Client) User() UserType {
@@ -65,7 +66,7 @@ func (self *UserType) Signup() map[string]interface{} {
 	json.Unmarshal(response, &result)
 
 	if sessionToken, exists := result["sessionToken"]; exists {
-		self.client.sessionToken = sessionToken.(string)
+		self.setSessionToken(sessionToken.(string))
 	}
 
 	if objectId, exists := result["objectId"]; exists {
@@ -85,7 +86,7 @@ func (self *UserType) Login(username string, password string) map[string]interfa
 	json.Unmarshal(response, &result)
 
 	if sessionToken, exists := result["sessionToken"]; exists {
-		self.client.sessionToken = sessionToken.(string)
+		self.setSessionToken(sessionToken.(string))
 	}
 
 	return result
@@ -100,7 +101,7 @@ func (self *UserType) Logout() map[string]interface{} {
 
 	json.Unmarshal(response, &result)
 
-	self.client.sessionToken = ""
+	self.clearSession()
 	self.objectId = ""
 
 	return result
@@ -183,9 +184,22 @@ func (self *UserType) ResetPassword(emailAddress string) map[string]interface{} 
 }
 
 func (self *UserType) IsAuthenticated() bool {
-	if len(self.client.sessionToken) > 0 {
+	if self.sessionToken.hasToken() {
 		return true
 	}
 
 	return false
+}
+
+func (self *UserType) GetSessionToken() string {
+	return self.sessionToken.token
+}
+
+func (self *UserType) setSessionToken(token string) {
+	self.sessionToken = Session(token)
+	currentSession = self.sessionToken
+}
+
+func (self *UserType) clearSession() {
+	self.setSessionToken("")
 }

@@ -13,10 +13,9 @@ const HOST_NAME string = "https://api.parse.com"
 const API_VERSION string = "1"
 
 type Client struct {
-	AppId        string
-	RestKey      string
-	MasterKey    string
-	sessionToken string
+	AppId     string
+	RestKey   string
+	MasterKey string
 }
 
 func (client Client) getRequest(url string) []byte {
@@ -47,8 +46,8 @@ func (client Client) request(method string, url string, params map[string]interf
 	httpRequest.Header.Add("X-Parse-REST-API-Key", client.RestKey)
 	// httpRequest.Header.Add("X-Parse-Master-Key", client.MasterKey)
 
-	if len(client.sessionToken) > 0 {
-		httpRequest.Header.Add("X-Parse-Session-Token", client.sessionToken)
+	if currentSession.hasToken() {
+		httpRequest.Header.Add("X-Parse-Session-Token", currentSession.token)
 	}
 
 	httpResponse, err := httpClient.Do(httpRequest)
